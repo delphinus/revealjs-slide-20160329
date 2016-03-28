@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
 
-    <title>TypeScript による今風の JavaScript 開発</title>
+    <title>TypeScript による今風の Web アプリ開発</title>
 
     <meta name="description" content="slide for 2016-03-29 MTG">
     <meta name="author" content="delphinus">
@@ -67,26 +67,22 @@
             * 次世代 JS - ECMAScript2015 の上位互換 + 型
             * Microsoft 製
             * オープンソース
-            * 各種エディタのサポートが充実（Vim も！）
+            * 各種エディタのサポートが充実
+              - MS 製だけど Visual Studio は別に必要ない。
+              - IntelliSense 並みのコード補完を実現するための仕組みが附属。
+                - Vim でも補完できる！
           </script>
         </section>
         <section data-markdown>
           <script type="text/template">
             ## ECMAScript2015 で<br>追加された文法
-            * Class & Namespace
-              ```typescript
-              namespace Hoge {
-                class Fuga {
-                  hofu() {}
-                }
-              }
-              ```
+            * Class & Module
             * Arrow Function `() => {}`
-            * Rest Parameters `(a, b, ...args) => {}`
-            * Spread Parameters `[a, b, ...hoge]`
+            * Rest / Spread Parameters `(a, b, ...args) => {}`
             * New Object Literals `{some, more, props}`
-            * Template String ``` `[${level}] ${message}` ```
-            * その他たくさん！
+            * Map / Set, Promise, Generator, Symbol, ...
+            * 今後まだまだ増える予定（ES2017 以降?）
+              - Decorator, async / await, ...
           </script>
         </section>
         <section data-markdown>
@@ -124,6 +120,8 @@
             ```
             * コンパイル時にエラーを見つけてくれる。
             * とかくフリーダムになりがちな JavaScript では凄く助かる。
+            * テストとかないのにコンパイル通ったら一発で動いた！スゴイ！  
+              <small>テストは書くべきだけどね……（結局書いてない）</small>
           </script>
         </section>
         <section data-markdown>
@@ -136,12 +134,44 @@
           <script type="text/template">
             ## 既存ライブラリーは<br>npm で管理
             * jQuery とか underscore.js とかいろいろ使いたいときもある。
-            * bower? 何それ (^q^)
             * 大体のライブラリーは [npm][] に登録してあるし、してないものは github から直で入れる。
-            * gulp や browserify 等のツールも全部 npm 経由で実行する。
-            * `package.json` と `npm-shrinkwrap.json` でバージョン管理。
+
+              ```sh
+              # jQuery のインストール
+              npm install --save-dev --save-exact jquery
+              ```
+
+            * bower? 何それ (^q^)
 
             [npm]: https://www.npmjs.com
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+            ## 各種ツールは npm 経由で実行
+            * gulp や browserify 等のツールも全部 npm 経由で実行する。
+            * `package.json` にタスクを書いて、`npm run` で実行。
+
+              ```sh
+              npm run build
+              npm run deploy
+              ...
+              ```
+
+            * こうすると、必ずプロジェクトにローカルなバージョンに固定されるので開発者も戸惑わない。
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+            ## パッケージの<br>バージョン管理
+            * 各人の環境で、jQuery その他のライブラリや、TypeScript や gulp 等のツール類もバージョンを揃える必要がある。
+            * `package.json` と `npm-shrinkwrap.json` で可能。
+              - Ruby で言うなら `Gemfile.lock` みたいなもの。
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+            ## 再び TypeScript の話
           </script>
         </section>
         <section data-markdown>
@@ -192,9 +222,26 @@
           <script type="text/template">
             ## browserify
             ```sh
-            browserify app.ts -p [ tsify ] > script.js
+            browserify myapp.js > bundle.js
             ```
-            * 毎回コマンド打つのは大変なので、普通は gulp で自動化する。
+
+            ### before
+
+            ```html
+            <script src="http://example.com/jquery.min.js">
+            <script src="http://example.com/underscore.min.js">
+            <script src="http://example.com/backbone.min.js">
+            <script src="http://example.com/bootstrap.min.js">
+            <script src="http://example.com/myapp.js">
+            ```
+
+            ### after
+
+            ```html
+            <script src="http://example.com/bundle.js">
+            ```
+
+            * ファイルサイズは相当でかくなるけどね。
           </script>
         </section>
         <section data-markdown>
