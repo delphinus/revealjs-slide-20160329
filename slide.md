@@ -288,12 +288,12 @@ Logger.fatal = (message: string): JQueryPromise<{}> => {
 
 ## Stacktrace-js
 * https://github.com/stacktracejs/stacktrace.js
-* スタックトレースが取れるスゴイやつ。
 
   ```typescript
   Logger.fatal = (message: string): Promise<{}> => {
     const level = "fatal";
-    return StackTrace.get()
+    return StackTrace
+      .get()
       .then((stackframes: StackTrace.StackFrame[]) =>
         Promise.resolve(
           $.post("/log", {level, message, stackframes})
@@ -307,9 +307,19 @@ Logger.fatal = (message: string): JQueryPromise<{}> => {
 
 
 
+* スタックトレースが取れるスゴイやつ。
+* `Promise` を返すことから分かるように、非同期に動作する。
+* ソースマップなどを加味して分かりやすいログを吐いてくれるけど、結構重い。
+  - 複数のスタックトレースを同時に生成しようとするとうまく吐けない。
+
+
+
 # まとめ
 * JS 界隈は常に勉強して（≒空気を読んで）行かないとすぐにおいて行かれる。 <!-- .element: class="fragment" -->
 * Rails のような頼れる存在はいないので自分で道を切り開く必要がある。 <!-- .element: class="fragment" -->
+
+
+
 * メリット <!-- .element: class="fragment" -->
   - スゴイ勉強になる（意識高い感） <!-- .element: class="fragment" -->
   - 何もないからこそ、自分の思い通りに作れる万能感。 <!-- .element: class="fragment" -->
