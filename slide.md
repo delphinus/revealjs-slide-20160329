@@ -30,17 +30,20 @@
 ## module loading
 
 * `some_module.js`
-  ```typescript
-  export const hoge = "ほげ";
-  export function fuga { console.log("ふが"); };
-  ```
-* `app.js`
-  ```typescript
-  import {hoge, fuga} from "./some_module";
 
-  console.log(hoge);
-  fuga();
-  ```
+```typescript
+export const hoge = "ほげ";
+export function fuga { console.log("ふが"); }
+```
+
+* `app.js`
+
+```typescript
+import {hoge, fuga} from "./some_module";
+
+console.log(hoge);
+fuga();
+```
 
 
 
