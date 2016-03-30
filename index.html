@@ -78,6 +78,7 @@
             ## ECMAScript2015 で<br>追加された文法
             * Class & Module
             * Arrow Function `() => {}`
+            * Block Scope Variables `let, const`
             * Rest / Spread Parameters `(a, b, ...args) => {}`
             * New Object Literals `{some, more, props}`
             * Map / Set, Promise, Generator, Symbol, ...
@@ -100,7 +101,17 @@
               console.log(hoge);
               fuga();
               ```
-            * 複数ファイルに分割して開発がやりやすくなった。
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+            * 今までの JS はモジュールという概念がなかった。
+            * 変数のスコープは関数スコープのみ。
+              - `function(){ var hoge; }`
+            * 複数のファイルで変数・関数を共有したいと思ったらグローバル汚染するしかなかった。
+              - ブラウザーなら `window.hoge = "ほげ"`
+            * グローバル汚染せずに複数ファイルに分けて開発が可能になった！
+              - 他の言語なら当たり前の機能がやっと……！
           </script>
         </section>:
         <section data-markdown>
@@ -109,18 +120,25 @@
             ```typescript
             let hoge: string = "ほげ";
 
-            // hoge = 1; # => error!
+            // hoge = 1; # => 型が string でないのでエラー！
 
+            // オリジナルの型を定義できる
             type LogLevel = "debug" | "info" | "warn" | "error" | "fatal";
+
             function log(level: LogLevel, message: string) {
               console.log(`[${level}] ${message}`);
             }
 
-            // log("waaarn", "fugafuga"); # => error!
+            // log("waaarn", "fugafuga");
+            // # => 第1引数の型が LogLevel と合致しないのでエラー！
             ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
             * コンパイル時にエラーを見つけてくれる。
             * とかくフリーダムになりがちな JavaScript では凄く助かる。
-            * テストとかないのにコンパイル通ったら一発で動いた！スゴイ！  
+            * 今回のプロジェクトではテストとかないのに、コンパイル通ったら一発で動いた！スゴイ！  
               <small>テストは書くべきだけどね……（結局書いてない）</small>
           </script>
         </section>
@@ -128,6 +146,7 @@
           <script type="text/template">
             # 実践
             * TypeScript を Rails プロジェクトで使ってみた。
+            * その中で遭遇した諸々。
           </script>
         </section>
         <section data-markdown>
@@ -148,16 +167,34 @@
         </section>
         <section data-markdown>
           <script type="text/template">
+            ## ツールはグローバルにインストールしない
+            * 今までは gulp や typescript 等の関連ツールをグローバルにインストールして使ってた。
+              ```sh
+              npm install -g typescript
+              # /usr/local/bin/typescript に入る
+              ```
+            * これだと各人が入れたバージョンを管理できない＞＜
+            * ビルドした結果が違うと開発に齟齬を来す。
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
             ## 各種ツールは npm 経由で実行
+            * ツールのインストール先はプロジェクトローカル。
+              ```sh
+              npm install -DE gulp
+              # node_modules/.bin/gulp に入る
+              ```
             * gulp や browserify 等のツールも全部 npm 経由で実行する。
             * `package.json` にタスクを書いて、`npm run` で実行。
-
               ```sh
-              npm run build
-              npm run deploy
+              npm start         # gulp 起動
+              npm run build     # TS をコンパイル & browserify
+              npm run clean     # ビルド済みのファイルを削除
+              npm run tslint    # TS の文法チェック
+              npm run typedoc   # ドキュメント作成
               ...
               ```
-
             * こうすると、必ずプロジェクトにローカルなバージョンに固定されるので開発者も戸惑わない。
           </script>
         </section>
@@ -207,7 +244,8 @@
             ## 書いてみた結果……
             * 型定義ファイルを書くためにはライブラリーのソースを読んで理解しないといけない。
               - ドキュメントに返値の型までちゃんと書いてあれば楽なんだけどね……
-            * 結構大変だけど書かないと開発始められない。
+            * 結構大変だけど書かないと開発始められない。  
+              <small>全部 any 型にキャストすれば何とかならんでもない。</small>
             * 既存のライブラリーを使いたいときはこのコストとのトレードオフ。
           </script>
         </section>
@@ -246,13 +284,23 @@
         </section>
         <section data-markdown>
           <script type="text/template">
-            ## Rails のアセット<br>パイプラインと共存する
-            * Sprockets を全部 JavaScript で置き換えてしまった[スゴイ人も居る][sugoi]が、ここまでやるのは大変。
+            ## Rails のアセットパイプライン
+            * アセットパイプラインとは……
+              - [アセットパイプライン | Rails日本語ドキュメント | Ruby STUDIO][as]
+              - 簡単に言うと、複数の JS, CSS を連結・圧縮してくれる便利機能。Coffee や Sass からの透過的な変換もやってくれる。
+              - スーパー便利すぎるが故に闇が深い＞＜
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+            ## アセットパイプラインと共存する
+            * Sprockets（アセット（略）の主要 gem）を全部 JavaScript で置き換えてしまった[スゴイ人も居る][sugoi]が、ここまでやるのは大変。
             * 折衷案として、browserify でビルドした一つの JS を `public/assets` に置く。
               - `app/assets/javascripts` は無視
             * パッケージによっては個別の CSS / img が必要なこともある。（bootstrap とか）
-              - これらは手でコピーしたりしてアセットパイプラインに載せる。
+              - これらは `app/assets/...` に手でコピーしてアセットパイプラインに載せる。
 
+            [as]: http://ruby.studio-kingdom.com/rails/guides/asset_pipeline
             [sugoi]: http://waka.github.io/2015/11/25/gulp_sprockets.html
           </script>
         </section>
@@ -275,6 +323,7 @@
             ## gulp
             * 定型タスクの例
               ```javascript
+              // JS の文法チェックを eslint で行う
               gulp.task(
                 'eslint',
                 () => gulp.src('gulp/**/*.js')
@@ -284,8 +333,16 @@
                   .pipe(plumber.stop())
               );
               ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
             * だいぶ秘伝のタレ化してしまった。
-            * ES2015 で書いて eslint かけて品質を担保。
+            * プロジェクト固有のバッドノウハウの固まりなので一般化できない。メンテもしにくい。
+            * せめて ES2015 で書いて eslint かけることで品質を担保。
+            * gulp 自体バージョン変わると文法もごりごり変わるし、プロダクト自体すぐにオワコン化する。（Grunt ェ……）
+              - この辺はホント JS キツイ。
+              - 根本的な解決策は今のところない。
           </script>
         </section>
         <section data-markdown>
@@ -293,7 +350,7 @@
             ## フロントエンドの<br>ログを取りたい！
             * 普通の Web アプリなら `console.log()` で十分。
             * でも WebView で表示してるときのログは見れない。
-            * production では致命的なバグが起こったときに教えて欲しい。
+            * 本番環境ではユーザーの端末で致命的なエラーが起こったときに教えて欲しい。
           </script>
         </section>
         <section data-markdown>
@@ -331,6 +388,21 @@
               // 致命的エラーが起きたときだけサーバーに送信
               window.onerror = (message: string) => Logger.fatal(message);
               ```
+          </script>
+        </section>
+        <section data-markdown>
+          <script type="text/template">
+            # まとめ
+            * JS 界隈は常に勉強して（≒空気を読んで）行かないとすぐにおいて行かれる。 <!-- .element: class="fragment" -->
+            * Rails のような頼れる存在はいないので自分で道を切り開く必要がある。 <!-- .element: class="fragment" -->
+            * メリット <!-- .element: class="fragment" -->
+              - スゴイ勉強になる（意識高い感） <!-- .element: class="fragment" -->
+              - 何もないからこそ、自分の思い通りに作れる万能感。 <!-- .element: class="fragment" -->
+            * デメリット <!-- .element: class="fragment" -->
+              - 各プロダクトがすぐオワコン化する。 <!-- .element: class="fragment" -->
+              - 書いたソースがすぐ暗黒化する。 <!-- .element: class="fragment" -->
+              - 一年後の自分ですらメンテできない。 <!-- .element: class="fragment" -->
+            * ドキュメント大事！！！ <!-- .element: class="fragment" -->
           </script>
         </section>
         <section data-markdown>
