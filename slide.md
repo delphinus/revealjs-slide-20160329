@@ -3,6 +3,7 @@
 
 
 ## TypeScript とは……
+
 * 次世代 JS - ECMAScript2015 の上位互換 + 型
 * Microsoft 製
 * オープンソース
@@ -14,6 +15,7 @@
 
 
 ## ECMAScript2015 で<br>追加された文法
+
 * Class & Module
 * Arrow Function `() => {}`
 * Block Scope Variables `let, const`
@@ -26,6 +28,7 @@
 
 
 ## module loading
+
 * `some_module.js`
   ```typescript
   export const hoge = "ほげ";
@@ -52,10 +55,11 @@
 
 
 ## TypeScript は ES2015 + 型
+
 ```typescript
 let hoge: string = "ほげ";
 
-// hoge = 1; # => 型が string でないのでエラー！
+// hoge = 1; #=> 型が string でないのでエラー！
 
 // オリジナルの型を定義できる
 type LogLevel = "debug" | "info" | "warn" | "error" | "fatal";
@@ -65,7 +69,7 @@ function log(level: LogLevel, message: string) {
 }
 
 // log("waaarn", "fugafuga");
-// # => 第1引数の型が LogLevel と合致しないのでエラー！
+// #=> 第1引数の型が LogLevel と合致しないのでエラー！
 ```
 
 
@@ -78,18 +82,20 @@ function log(level: LogLevel, message: string) {
 
 
 # 実践
+
 * TypeScript を Rails プロジェクトで使ってみた。
 * その中で遭遇した諸々。
 
 
 
 ## 既存ライブラリーは<br>npm で管理
+
 * jQuery とか underscore.js とかいろいろ使いたいときもある。
 * 大体のライブラリーは [npm][] に登録してあるし、してないものは github から直で入れる。
 
   ```sh
   # jQuery のインストール
-  npm install --save-dev --save-exact jquery
+  npm install -DE jquery
   ```
 
 * bower? 何それ (^q^)
@@ -99,6 +105,7 @@ function log(level: LogLevel, message: string) {
 
 
 ## ツールはグローバルに<br>インストールしない
+
 * 今までは gulp や typescript 等の関連ツールをグローバルにインストールして使ってた。
   ```sh
   npm install -g typescript
@@ -110,6 +117,7 @@ function log(level: LogLevel, message: string) {
 
 
 ## 各種ツールは npm 経由で実行
+
 * ツールのインストール先はプロジェクトローカル。
   ```sh
   npm install -DE gulp
@@ -130,6 +138,7 @@ function log(level: LogLevel, message: string) {
 
 
 ## パッケージの<br>バージョン管理
+
 * 各人の環境で、jQuery その他のライブラリや、TypeScript や gulp 等のツール類もバージョンを揃える必要がある。
 * `package.json` と `npm-shrinkwrap.json` で可能。
   - Ruby で言うなら `Gemfile.lock` みたいなもの。
@@ -141,6 +150,7 @@ function log(level: LogLevel, message: string) {
 
 
 ## 既存の JS ライブラリと<br>共存する
+
 * 最初から TypeScript で書いてあるライブラリなんてほとんどない。
 * jQuery プラグインとか使いたい！
 * それ、型定義ファイルでできるよ。
@@ -148,6 +158,7 @@ function log(level: LogLevel, message: string) {
 
 
 ## 型定義ファイル
+
 * 既存のライブラリーが export する関数・変数などについての型情報が書いてある。
 * メジャーなライブラリーについては [DefinitelyTyped][] に揃ってる。
 * メジャーじゃないものは……自分で書くしかない。
@@ -166,6 +177,7 @@ function log(level: LogLevel, message: string) {
 
 
 ## 書いてみた結果……
+
 * 型定義ファイルを書くためにはライブラリーのソースを読んで理解しないといけない。
   - ドキュメントに返値の型までちゃんと書いてあれば楽なんだけどね……
 * 結構大変だけど書かないと開発始められない。  
@@ -175,12 +187,14 @@ function log(level: LogLevel, message: string) {
 
 
 ## 複数ファイルをまとめる
+
 * （TypeScript でも）複数ファイルでアプリを構成することはできるが、`<script>` をたくさん書くとパフォーマンス的にアレ。
 * 複数のモジュールを一つにまとめ、場合によっては難読化する。
 
 
 
 ## browserify
+
 ```sh
 browserify myapp.js > bundle.js
 ```
@@ -206,6 +220,7 @@ browserify myapp.js > bundle.js
 
 
 ## Rails の<br>アセットパイプライン
+
 * アセットパイプラインとは……
   - [アセットパイプライン | Rails日本語ドキュメント | Ruby STUDIO][as]
   - 簡単に言うと、複数の JS, CSS を連結・圧縮してくれる便利機能。Coffee や Sass からの透過的な変換もやってくれる。
@@ -216,6 +231,7 @@ browserify myapp.js > bundle.js
 
 
 ## アセットパイプラインと<br>共存する
+
 * Sprockets（アセット（略）の主要 gem）を全部 JavaScript で置き換えてしまった[スゴイ人も居る][sugoi]が、ここまでやるのは大変。
 * 折衷案として、browserify でビルドした一つの JS を `public/assets` に置く。
   - `app/assets/javascripts` は無視
@@ -227,6 +243,7 @@ browserify myapp.js > bundle.js
 
 
 ## タスクの自動化
+
 * 定型タスクを自動化する。
   - TypeScript をコンパイル。
   - 複数ファイルをビルドしてまとめる。
@@ -240,6 +257,7 @@ browserify myapp.js > bundle.js
 
 
 ## gulp
+
 * 定型タスクの例
   ```javascript
   // JS の文法チェックを eslint で行う
@@ -266,6 +284,7 @@ browserify myapp.js > bundle.js
 
 
 ## フロントエンドの<br>ログを取りたい！
+
 * 普通の Web アプリなら `console.log()` で十分。
 * でも WebView で表示してるときのログは見れない。
 * 本番環境ではユーザーの端末で致命的なエラーが起こったときに教えて欲しい。
@@ -273,6 +292,7 @@ browserify myapp.js > bundle.js
 
 
 ## ログをバックエンドに送るモジュールを書く
+
 ```typescript
 Logger.fatal = (message: string): JQueryPromise<{}> => {
   const level = "fatal";
@@ -287,9 +307,11 @@ Logger.fatal = (message: string): JQueryPromise<{}> => {
 
 
 ## Stacktrace-js
+
 * https://github.com/stacktracejs/stacktrace.js
 
   ```typescript
+  // logger.ts
   Logger.fatal = (message: string): Promise<{}> => {
     const level = "fatal";
     return StackTrace
@@ -301,8 +323,12 @@ Logger.fatal = (message: string): JQueryPromise<{}> => {
       );
   };
 
-  // 致命的エラーが起きたときだけサーバーに送信
-  window.onerror = (message: string) => Logger.fatal(message);
+  // hogehoge.ts
+  export class hoge {
+    fuga() {
+      Logger.fatal("ERROR!!!");
+    }
+  }
   ```
 
 
@@ -315,16 +341,17 @@ Logger.fatal = (message: string): JQueryPromise<{}> => {
 
 
 # まとめ
+
 * JS 界隈は常に勉強して（≒空気を読んで）行かないとすぐにおいて行かれる。 <!-- .element: class="fragment" -->
 * Rails のような頼れる存在はいないので自分で道を切り開く必要がある。 <!-- .element: class="fragment" -->
 
 
 
-* メリット <!-- .element: class="fragment" -->
+* メリット
   - スゴイ勉強になる（意識高い感） <!-- .element: class="fragment" -->
   - 何もないからこそ、自分の思い通りに作れる万能感。 <!-- .element: class="fragment" -->
 * デメリット <!-- .element: class="fragment" -->
-  - 各プロダクトがすぐオワコン化する。 <!-- .element: class="fragment" -->
+  - 使ってるプロダクトがすぐオワコン化する。 <!-- .element: class="fragment" -->
   - 書いたソースがすぐ暗黒化する。 <!-- .element: class="fragment" -->
   - 一年後の自分ですらメンテできない。 <!-- .element: class="fragment" -->
 * ドキュメント大事！！！ <!-- .element: class="fragment" -->
@@ -332,4 +359,9 @@ Logger.fatal = (message: string): JQueryPromise<{}> => {
 
 
 # 終わり
+
+* [reveal.js][] 超便利！
+
+[reveal.js]: https://github.com/hakimel/reveal.js/
+
 [初めに戻る](#/)
