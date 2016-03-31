@@ -266,17 +266,17 @@ browserify myapp.js > bundle.js
 ## gulp
 
 * 定型タスクの例
-  ```javascript
-  // JS の文法チェックを eslint で行う
-  gulp.task(
-    'eslint',
-    () => gulp.src('gulp/**/*.js')
-      .pipe(plumber({errorHandler: handleErrors}))
-      .pipe(eslint())
-      .pipe(eslint.failOnError())
-      .pipe(plumber.stop())
-  );
-  ```
+```javascript
+// JS の文法チェックを eslint で行う
+gulp.task(
+  'eslint',
+  () => gulp.src('gulp/**/*.js')
+    .pipe(plumber({errorHandler: handleErrors}))
+    .pipe(eslint())
+    .pipe(eslint.failOnError())
+    .pipe(plumber.stop())
+);
+```
 
 
 
