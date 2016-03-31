@@ -1,5 +1,9 @@
 # TypeScript による<br>今風の<br>Web アプリ開発
 
+by 陣内 靖（じんのうち やすし）
+
+[@delphinus35](https://twitter.com/delphinus35)
+
 
 
 ## TypeScript とは……
