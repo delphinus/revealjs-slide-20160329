@@ -266,6 +266,7 @@ browserify myapp.js > bundle.js
 ## gulp
 
 * 定型タスクの例
+
 ```javascript
 // JS の文法チェックを eslint で行う
 gulp.task(
