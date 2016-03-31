@@ -205,17 +205,17 @@ browserify myapp.js > bundle.js
 ### before
 
 ```html
-<script src="http://example.com/jquery.min.js">
-<script src="http://example.com/underscore.min.js">
-<script src="http://example.com/backbone.min.js">
-<script src="http://example.com/bootstrap.min.js">
-<script src="http://example.com/myapp.js">
+<script src="http://example.com/jquery.min.js"></script>
+<script src="http://example.com/underscore.min.js"></script>
+<script src="http://example.com/backbone.min.js"></script>
+<script src="http://example.com/bootstrap.min.js"></script>
+<script src="http://example.com/myapp.js"></script>
 ```
 
 ### after
 
 ```html
-<script src="http://example.com/bundle.js">
+<script src="http://example.com/bundle.js"></script>
 ```
 
 <small>ファイルサイズは相当でかくなるけどね。</small>
